@@ -4,7 +4,10 @@ group Client
     Fable.Elmish.Debugger
     Fable.Elmish.React
     Fable.Elmish.HMR
+    Fable.FontAwesome.Free
     Thoth.Fetch
     Fulma
-    Fable.FontAwesome.Free
 
+group Forks
+    Thoth.Elmish.FormBuilder
+    Thoth.Elmish.FormBuilder.BasicFields
