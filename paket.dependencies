@@ -19,13 +19,9 @@ group Client
     nuget Fable.Elmish.React ~> 3
     nuget Fable.FontAwesome.Free ~> 2
     nuget Fable.React ~> 5
-    nuget Fulma ~> 2
+    nuget Feliz
     nuget Thoth.Fetch ~> 1
-
-group Forks
-    git https://github.com/MattKunze/Thoth.git master build: "fake.sh build", Packages: /src/
-    nuget Thoth.Elmish.FormBuilder ~> 0.2
-    nuget Thoth.Elmish.FormBuilder.BasicFields ~> 0.2
+    nuget Zanaptak.TypedCssClasses
 
 group Build
     source https://api.nuget.org/v3/index.json

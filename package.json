@@ -1,7 +1,8 @@
 {
     "private": true,
     "scripts": {
-        "start": "fake build -t run"
+        "start": "fake build -t run",
+        "clean": "fake build -t clean"
     },
     "devDependencies": {
         "@babel/core": "^7.4.4",

@@ -2,15 +2,12 @@ module Client
 
 open Elmish
 open Elmish.React
-
-open Init
-open Update
-open View
-
+open App
 #if DEBUG
 open Elmish.Debug
 open Elmish.HMR
 #endif
+
 
 Program.mkProgram init update view
 #if DEBUG

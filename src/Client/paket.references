@@ -5,9 +5,6 @@ group Client
     Fable.Elmish.React
     Fable.Elmish.HMR
     Fable.FontAwesome.Free
+    Feliz
     Thoth.Fetch
-    Fulma
-
-group Forks
-    Thoth.Elmish.FormBuilder
-    Thoth.Elmish.FormBuilder.BasicFields
+    Zanaptak.TypedCssClasses
