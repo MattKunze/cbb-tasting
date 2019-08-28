@@ -8,7 +8,7 @@ type Counter =
 
 type Undefined = exn
 
-type SessionId = SessionId of Guid
+type SessionId = private SessionId of Guid
 
 type JudgeName = JudgeName of String
 
@@ -17,6 +17,12 @@ type BreweryName = BreweryName of String
 type BeerName = BeerName of String
 
 type BeerStyle = BeerStyle of String
+
+module SessionId =
+
+    let value (SessionId id) = id
+
+    let create = Guid.NewGuid() |> SessionId
 
 module Score =
     type IScore =

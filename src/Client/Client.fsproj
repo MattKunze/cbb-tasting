@@ -9,6 +9,7 @@
     <Compile Include="Version.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="CreateSessionForm.fs" />
+    <Compile Include="SessionDetails.fs" />
     <Compile Include="App.fs" />
     <Compile Include="Client.fs" />
   </ItemGroup>
