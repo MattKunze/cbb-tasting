@@ -11,7 +11,8 @@ module Controls =
         { Label : string
           Placeholder : string option
           Value : string option
-          OnChange : string -> unit }
+          OnChange : string -> unit
+          OnBlur : (unit -> unit) option }
 
     let private fieldLabel (label : string) =
         Html.label [
@@ -30,7 +31,12 @@ module Controls =
                     prop.inputType "text"
                     prop.placeholder placeholder
                     prop.valueOrDefault value
-                    prop.onTextChange definition.OnChange ] ] ]
+                    prop.onTextChange definition.OnChange
+                    prop.onBlur (fun _ ->
+                        match definition.OnBlur with
+                        | Some cb -> cb()
+                        | None -> ()
+                    ) ] ] ]
 
     let inputField (definition : InputDefinition) =
         Html.div [

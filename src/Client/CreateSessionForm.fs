@@ -14,6 +14,7 @@ type Model =
 type Msg =
     | SetDate of string
     | SetStyles of string
+    | ParseDate
     | CreateSession
 
 let init() =
@@ -46,6 +47,14 @@ let update model msg =
     match msg with
     | SetDate update -> { model with Date = handleInput update }
     | SetStyles update -> { model with Styles = handleInput update }
+    | ParseDate ->
+        printf "ParseDate"
+        { model with
+            Date =
+                match model.Date with
+                | DateTime dt -> Some (dt.ToString "yyyy/MM/dd")
+                | _ -> None
+        }
     | CreateSession -> model // TODO - show validation
 
 let private formControls dispatch =
@@ -78,13 +87,15 @@ let view model (dispatch : Msg -> unit) =
                         { Label = "Date"
                           Value = model.Date
                           Placeholder = Some "yyyy/mm/dd or whatever"
-                          OnChange = (SetDate >> dispatch) }
+                          OnChange = (SetDate >> dispatch)
+                          OnBlur = Some (fun _ -> ParseDate |> dispatch) }
 
                     Controls.inputField
                         { Label = "Styles"
                           Value = model.Styles
                           Placeholder = None
-                          OnChange = (SetStyles >> dispatch) }
+                          OnChange = (SetStyles >> dispatch)
+                          OnBlur = None }
 
                     formControls dispatch ]
 
