@@ -14,13 +14,17 @@ type Model = {
 type Msg =
 | EndSession
 
+type ExternalMsg =
+| Noop
+| SessionEnded
+
 let init session = {
     Session = session
 }
 
 let update model msg =
     match msg with
-    | EndSession -> model
+    | EndSession -> model, SessionEnded
 
 let view model (dispatch: Msg -> unit) =
     let (BeerStyle style) = model.Session.Styles
@@ -39,9 +43,4 @@ let view model (dispatch: Msg -> unit) =
                     Html.button [
                         prop.classes [ Css.Bulma.Button; Css.Bulma.IsPrimary ]
                         prop.children [ Html.text "End it"]
-                        prop.onClick (fun _ -> EndSession |> dispatch)
-                    ]
-                ]
-            ]
-        ]
-    ]
+                        prop.onClick (fun _ -> EndSession |> dispatch) ] ] ] ] ]

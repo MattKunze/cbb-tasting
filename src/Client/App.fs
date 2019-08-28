@@ -34,18 +34,17 @@ let withBlankSession =
     { ActivePage = CreateSession blankSession }
 
 let withCreateSessionHandler msg childModel pageModel =
-    let update = CreateSessionForm.update childModel msg
-    match msg, CreateSessionForm.toSession update with
-    | CreateSessionForm.Msg.CreateSession, Some session ->
-        { pageModel with
-            ActivePage = ExistingSession(SessionDetails.init session)
-        }
-    | _ -> { pageModel with ActivePage = CreateSession update }
+    let update, externalMsg = CreateSessionForm.update childModel msg
+    match externalMsg with
+    | CreateSessionForm.ExternalMsg.SessionCreated session ->
+        { pageModel with ActivePage = ExistingSession(SessionDetails.init session) }
+    | _ ->
+        { pageModel with ActivePage = CreateSession update }
 
 let withSessionDetailsHandler msg childModel pageModel =
-    let update = SessionDetails.update childModel msg
-    match msg with
-    | SessionDetails.Msg.EndSession -> withBlankSession
+    let update, externalMsg = SessionDetails.update childModel msg
+    match externalMsg with
+    | SessionDetails.ExternalMsg.SessionEnded -> withBlankSession
     | _ -> { pageModel with ActivePage = ExistingSession update }
 
 let update msg model =

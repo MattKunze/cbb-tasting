@@ -15,7 +15,11 @@ type Msg =
     | SetDate of string
     | SetStyles of string
     | ParseDate
-    | CreateSession
+    | Submit
+
+type ExternalMsg =
+    | Noop // :P
+    | SessionCreated of Tasting.Session
 
 let init() =
     { Date = None
@@ -27,7 +31,7 @@ let private (|DateTime|_|) str =
     | true, dt -> Some(dt)
     | _ -> None
 
-let toSession model : Tasting.Session option =
+let private toSession model : Tasting.Session option =
     match model.Date, model.Styles with
     | DateTime dt, Some styles ->
         Some {
@@ -45,8 +49,8 @@ let private handleInput (str : string) =
 
 let update model msg =
     match msg with
-    | SetDate update -> { model with Date = handleInput update }
-    | SetStyles update -> { model with Styles = handleInput update }
+    | SetDate update -> { model with Date = handleInput update }, Noop
+    | SetStyles update -> { model with Styles = handleInput update }, Noop
     | ParseDate ->
         printf "ParseDate"
         { model with
@@ -54,8 +58,12 @@ let update model msg =
                 match model.Date with
                 | DateTime dt -> Some (dt.ToString "yyyy/MM/dd")
                 | _ -> None
-        }
-    | CreateSession -> model // TODO - show validation
+        }, Noop
+    | Submit ->
+        match toSession model with
+        | Some session -> model, SessionCreated session
+        // TODO - show validation errors
+        | None -> model, Noop
 
 let private formControls dispatch =
     Html.div [
@@ -64,14 +72,14 @@ let private formControls dispatch =
             Html.button [
                 prop.classes [ Css.Bulma.Button; Css.Bulma.IsPrimary ]
                 prop.children [ Html.text "Submit" ]
-                prop.onClick (fun _ -> CreateSession |> dispatch) ] ] ]
+                prop.onClick (fun _ -> Submit |> dispatch) ] ] ]
 
 let private submitOnEnter dispatch (ev : Browser.Types.KeyboardEvent) =
     // TODO - seems like a crappy way to figure out the type of the target
     // element but not seeing another way to accomplish this at the moment
     let target = ev.target.ToString()
     if ev.which = 13.0 && target = "[object HTMLInputElement]" then
-        CreateSession |> dispatch
+        Submit |> dispatch
 
 let view model (dispatch : Msg -> unit) =
     Html.div [
