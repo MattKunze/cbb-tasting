@@ -7,13 +7,13 @@ open Feliz
 open Helpers
 open Shared
 
-type Model =
-    { Date : string option
-      Styles : string option }
+[<RequireQualifiedAccess>]
+type FormKey = Date | Styles
+
+type Model = { Bucket : Map<FormKey, string> }
 
 type Msg =
-    | SetDate of string
-    | SetStyles of string
+    | Update of FormKey * string
     | ParseDate
     | Submit
 
@@ -21,9 +21,7 @@ type ExternalMsg =
     | Noop // :P
     | SessionCreated of Tasting.Session
 
-let init() =
-    { Date = None
-      Styles = None }
+let init() = { Bucket = Map.empty }
 
 let private (|DateTime|_|) str =
     match DateTime.TryParse(str |> Option.defaultValue "") with
@@ -32,7 +30,7 @@ let private (|DateTime|_|) str =
     | _ -> None
 
 let private toSession model : Tasting.Session option =
-    match model.Date, model.Styles with
+    match model.Bucket.TryFind FormKey.Date, model.Bucket.TryFind FormKey.Styles with
     | DateTime dt, Some styles ->
         Some {
             Id = SessionId.create;
@@ -42,23 +40,22 @@ let private toSession model : Tasting.Session option =
         }
     | _ -> None
 
-let private handleInput (str : string) =
-    match str with
-    | "" -> None
-    | _ -> Some str
-
 let update model msg =
     match msg with
-    | SetDate update -> { model with Date = handleInput update }, Noop
-    | SetStyles update -> { model with Styles = handleInput update }, Noop
+    | Update (key, value) ->
+        match Validation.clean value with
+        | Some value ->
+            { model with Bucket = model.Bucket |> Map.add key value }, Noop
+        | None ->
+            { model with Bucket = model.Bucket |> Map.remove key }, Noop
     | ParseDate ->
         printf "ParseDate"
-        { model with
-            Date =
-                match model.Date with
-                | DateTime dt -> Some (dt.ToString "yyyy/MM/dd")
-                | _ -> None
-        }, Noop
+        match model.Bucket |> Map.tryFind FormKey.Date with
+        | DateTime dt ->
+            let formatted = dt.ToString "yyyy/MM/dd"
+            { model with Bucket = model.Bucket |> Map.add FormKey.Date formatted }, Noop
+        | _ ->
+            { model with Bucket = model.Bucket |> Map.remove FormKey.Date }, Noop
     | Submit ->
         match toSession model with
         | Some session -> model, SessionCreated session
@@ -92,17 +89,19 @@ let view model (dispatch : Msg -> unit) =
             Html.fieldSet [
                 prop.children [
                     Controls.inputField
-                        { Label = "Date"
-                          Value = model.Date
+                        { Type = Controls.Text
+                          Label = "Date"
+                          Value = model.Bucket |> Map.tryFind FormKey.Date
                           Placeholder = Some "yyyy/mm/dd or whatever"
-                          OnChange = (SetDate >> dispatch)
+                          OnChange = (fun update -> Update (FormKey.Date, update) |> dispatch)
                           OnBlur = Some (fun _ -> ParseDate |> dispatch) }
 
                     Controls.inputField
-                        { Label = "Styles"
-                          Value = model.Styles
+                        { Type = Controls.Text
+                          Label = "Styles"
+                          Value = model.Bucket |> Map.tryFind FormKey.Styles
                           Placeholder = None
-                          OnChange = (SetStyles >> dispatch)
+                          OnChange = (fun update -> Update (FormKey.Styles, update) |> dispatch)
                           OnBlur = None }
 
                     formControls dispatch ]

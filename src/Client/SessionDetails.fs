@@ -12,10 +12,12 @@ type Model = {
 }
 
 type Msg =
+| NewEvaluation
 | EndSession
 
 type ExternalMsg =
 | Noop
+| EnterEvaluation
 | SessionEnded
 
 let init session = {
@@ -24,6 +26,7 @@ let init session = {
 
 let update model msg =
     match msg with
+    | NewEvaluation -> model, EnterEvaluation
     | EndSession -> model, SessionEnded
 
 let view model (dispatch: Msg -> unit) =
@@ -42,5 +45,9 @@ let view model (dispatch: Msg -> unit) =
                 prop.children [
                     Html.button [
                         prop.classes [ Css.Bulma.Button; Css.Bulma.IsPrimary ]
+                        prop.children [ Html.text "New Eval"]
+                        prop.onClick (fun _ -> NewEvaluation |> dispatch) ]
+                    Html.button [
+                        prop.classes [ Css.Bulma.Button; Css.Bulma.IsWarning ]
                         prop.children [ Html.text "End it"]
                         prop.onClick (fun _ -> EndSession |> dispatch) ] ] ] ] ]

@@ -110,6 +110,6 @@ module Tasting =
         { SessionId : SessionId
           JudgeName : JudgeName
           Comments : String
-          Score : Score.CompositeScore
+        //   Score : Score.CompositeScore
           BreweryName : BreweryName
           BeerName : BeerName }
