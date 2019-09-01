@@ -1,8 +1,9 @@
 [<RequireQualifiedAccess>]
-module CreateSessionForm
+module SessionForm
 
 open System
 
+open Elmish
 open Feliz
 open Helpers
 open Shared
@@ -18,7 +19,6 @@ type Msg =
     | Submit
 
 type ExternalMsg =
-    | Noop // :P
     | SessionCreated of Tasting.Session
 
 let init() = { Bucket = Map.empty }
@@ -41,26 +41,27 @@ let private toSession model : Tasting.Session option =
     | _ -> None
 
 let update model msg =
+    printf "form update %A" msg
     match msg with
     | Update (key, value) ->
         match Validation.clean value with
         | Some value ->
-            { model with Bucket = model.Bucket |> Map.add key value }, Noop
+            { model with Bucket = model.Bucket |> Map.add key value }, Cmd.none
         | None ->
-            { model with Bucket = model.Bucket |> Map.remove key }, Noop
+            { model with Bucket = model.Bucket |> Map.remove key }, Cmd.none
     | ParseDate ->
         printf "ParseDate"
         match model.Bucket |> Map.tryFind FormKey.Date with
         | DateTime dt ->
             let formatted = dt.ToString "yyyy/MM/dd"
-            { model with Bucket = model.Bucket |> Map.add FormKey.Date formatted }, Noop
+            { model with Bucket = model.Bucket |> Map.add FormKey.Date formatted }, Cmd.none
         | _ ->
-            { model with Bucket = model.Bucket |> Map.remove FormKey.Date }, Noop
+            { model with Bucket = model.Bucket |> Map.remove FormKey.Date }, Cmd.none
     | Submit ->
         match toSession model with
-        | Some session -> model, SessionCreated session
+        | Some session -> model, Cmd.ofMsg (SessionCreated session)
         // TODO - show validation errors
-        | None -> model, Noop
+        | None -> model, Cmd.none
 
 let private formControls dispatch =
     Html.div [
@@ -75,7 +76,7 @@ let private submitOnEnter dispatch (ev : Browser.Types.KeyboardEvent) =
     // TODO - seems like a crappy way to figure out the type of the target
     // element but not seeing another way to accomplish this at the moment
     let target = ev.target.ToString()
-    if ev.which = 13.0 && target = "[object HTMLInputElement]" then
+    if ev.key = "Enter" && target = "[object HTMLInputElement]" then
         Submit |> dispatch
 
 let view model (dispatch : Msg -> unit) =

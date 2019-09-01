@@ -1,6 +1,7 @@
 [<RequireQualifiedAccess>]
 module EvaluationForm
 
+open Elmish
 open Feliz
 open Helpers
 open Shared
@@ -19,7 +20,6 @@ type Msg =
     | Submit
 
 type ExternalMsg =
-    | Noop
     | EvaluationCanceled
     | EvaluationEntered of Tasting.Evaluation
 
@@ -46,14 +46,14 @@ let update model msg =
     | Update (key, value) ->
         match Validation.clean value with
         | Some value ->
-            { model with Bucket = model.Bucket |> Map.add key value }, Noop
+            { model with Bucket = model.Bucket |> Map.add key value }, Cmd.none
         | None ->
-            { model with Bucket = model.Bucket |> Map.remove key }, Noop
-    | Cancel -> model, EvaluationCanceled
+            { model with Bucket = model.Bucket |> Map.remove key }, Cmd.none
+    | Cancel -> model, Cmd.ofMsg EvaluationCanceled
     | Submit ->
         match toEvaluation model with
-        | Some evaluation -> model, EvaluationEntered evaluation
-        | None -> model, Noop
+        | Some evaluation -> model, Cmd.ofMsg (EvaluationEntered evaluation)
+        | None -> model, Cmd.none
 
 let private formControls dispatch =
     Html.div [

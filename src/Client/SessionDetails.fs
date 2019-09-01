@@ -3,6 +3,7 @@ module SessionDetails
 
 open System
 
+open Elmish
 open Feliz
 open Helpers
 open Shared
@@ -16,7 +17,6 @@ type Msg =
 | EndSession
 
 type ExternalMsg =
-| Noop
 | EnterEvaluation
 | SessionEnded
 
@@ -26,8 +26,8 @@ let init session = {
 
 let update model msg =
     match msg with
-    | NewEvaluation -> model, EnterEvaluation
-    | EndSession -> model, SessionEnded
+    | NewEvaluation -> model, Cmd.ofMsg EnterEvaluation
+    | EndSession -> model, Cmd.ofMsg SessionEnded
 
 let view model (dispatch: Msg -> unit) =
     let (BeerStyle style) = model.Session.Styles
