@@ -11,6 +11,9 @@
     <Compile Include="SessionForm.fs" />
     <Compile Include="SessionDetails.fs" />
     <Compile Include="EvaluationForm.fs" />
+    <Compile Include="Types.fs" />
+    <Compile Include="Router.fs" />
+    <Compile Include="State.fs" />
     <Compile Include="App.fs" />
     <Compile Include="Client.fs" />
   </ItemGroup>
