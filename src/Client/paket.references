@@ -1,0 +1,7 @@
+group Client
+  Fable.Core
+  Fable.Promise
+  Fable.Fetch
+  Fable.Browser.Dom
+  Feliz
+  Fable.Elmish.React

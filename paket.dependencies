@@ -1,0 +1,19 @@
+group Client
+  source https://api.nuget.org/v3/index.json
+  framework: netcoreapp3.0
+  storage:none
+
+  nuget Fable.Core
+  nuget Fable.Elmish.React
+  nuget Fable.Promise
+  nuget Fable.Fetch
+  nuget Fable.Browser.Dom
+  nuget Feliz
+
+group Server
+  source https://api.nuget.org/v3/index.json
+  framework: netcoreapp3.0
+  storage:none
+
+  nuget Giraffe
+  nuget Microsoft.AspNetCore.App
