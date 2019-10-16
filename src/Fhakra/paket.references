@@ -1,9 +1,6 @@
 group Frontend
   Fable.Browser.Dom
   Fable.Core
-  Fable.Elmish.React
-  Fable.Fetch
-  Fable.Promise
   Feliz
   Feliz.Router
   Zanaptak.TypedCssClasses

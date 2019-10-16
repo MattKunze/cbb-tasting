@@ -1,4 +1,4 @@
-group Client
+group Frontend
   source https://api.nuget.org/v3/index.json
   framework: netcoreapp3.0
   storage:none
@@ -9,8 +9,10 @@ group Client
   nuget Fable.Fetch
   nuget Fable.Browser.Dom
   nuget Feliz
+  nuget Feliz.Router
+  nuget Zanaptak.TypedCssClasses
 
-group Server
+group Backend
   source https://api.nuget.org/v3/index.json
   framework: netcoreapp3.0
   storage:none

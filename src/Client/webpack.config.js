@@ -9,7 +9,19 @@ module.exports = {
   },
   devServer: {
     contentBase: "./public",
-    port: 8080
+    port: 8080,
+    proxy: {
+      "/api": {
+        target: "http://localhost:" + (process.env.SERVER_PROXY_PORT || "8085"),
+        pathRewrite: { "^/api": "" },
+        changeOrigin: true
+      },
+      // redirect websocket requests that start with /socket/* to the server on the port 8085
+      "/socket/*": {
+        target: "http://localhost:" + (process.env.SERVER_PROXY_PORT || "8085"),
+        ws: true
+      }
+    }
   },
   module: {
     rules: [
